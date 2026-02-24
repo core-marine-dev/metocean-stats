@@ -932,6 +932,23 @@ def plot_monthly_return_periods(data, var='hs', periods=[1, 10, 100, 10000],dist
     return fig
 
 
+# def plot_directional_return_periods(data, var='hs',var_dir='Pdir', periods=[1, 10, 100, 10000],distribution='Weibull', units='m',adjustment='NORSOK',method='default',threshold='default', output_file='monthly_extremes_weibull.png'):
+#     df = tables.table_directional_return_periods(data=data,var=var,var_dir=var_dir, periods=periods, distribution=distribution, units=units,adjustment=adjustment,method=method,threshold=threshold, output_file=None)
+#     fig, ax = plt.subplots()
+#     cmap = plt.get_cmap("viridis")
+#     colors = cmap(np.linspace(0,1,len(periods)))
+#     a=0
+#     for i in periods:
+#         plt.plot(df['Direction sector'][1:-1], df[f'Return period: {i} [years]'][1:-1],marker = 'o',label=f'{i} years',color=colors[a])
+#         a=a+1
+    
+#     plt.title('Return values for '+str(var)+' ['+units+']',fontsize=16)
+#     plt.xlabel('Direction',fontsize=15)
+#     plt.legend()
+#     plt.grid()
+#     if output_file != "": plt.savefig(output_file)
+#     return fig
+
 def plot_directional_return_periods(data, var='hs',var_dir='Pdir', periods=[1, 10, 100, 10000],distribution='Weibull', units='m',adjustment='NORSOK',method='default',threshold='default', output_file='monthly_extremes_weibull.png'):
     df = tables.table_directional_return_periods(data=data,var=var,var_dir=var_dir, periods=periods, distribution=distribution, units=units,adjustment=adjustment,method=method,threshold=threshold, output_file=None)
     fig, ax = plt.subplots()
@@ -948,7 +965,6 @@ def plot_directional_return_periods(data, var='hs',var_dir='Pdir', periods=[1, 1
     plt.grid()
     if output_file != "": plt.savefig(output_file)
     return fig
-
 
 def plot_polar_directional_return_periods(data, var='hs', var_dir='Pdir', periods=[1, 10, 100, 10000], distribution='Weibull', units='m', adjustment='NORSOK',method='default',threshold='default', output_file='monthly_extremes_weibull.png'):
     df = tables.table_directional_return_periods(data=data, var=var, var_dir=var_dir, periods=periods, distribution=distribution, units=units, adjustment=adjustment, method=threshold,threshold=threshold,output_file=None)
