@@ -562,6 +562,7 @@ def plot_joint_2D_contour(
         model='hs_tp',
         return_periods=[10,100,1000], 
         state_duration = 1,
+        cmap = plt.get_cmap("viridis"),
         output_file='contours.png'):
     """
     Plot joint contours for the given return periods. 
@@ -583,6 +584,8 @@ def plot_joint_2D_contour(
         A list of return periods for which to create contours.
     state_duration : int
         Duration of each entry in the data, in hours. E.g., 1 or 3 hours per entry.
+    cmap : colormap
+        Color scale for the plots
     output_file : str
         Filename for saved figure.
     
@@ -597,11 +600,12 @@ def plot_joint_2D_contour(
     """
     model = JointProbabilityModel(model)
     model.fit(data,var1,var2)
-    ax = model.plot_contours(periods=return_periods,state_duration=state_duration)
-    model.plot_data_density(ax)
-    model.plot_dependent_percentiles(ax)
-    model.plot_DNVGL_steepness_criterion(ax,label="Steepness\nlimit")
-    model.plot_legend(ax)
+    ax = model.plot_contours(periods=return_periods,state_duration=state_duration,cmap = cmap)
+    ax.set_title(var1+'-'+var2+' 2D contours')
+    model.plot_data_density(ax, cmap = cmap)
+    # model.plot_dependent_percentiles(ax)
+    # model.plot_DNVGL_steepness_criterion(ax,label="Steepness\nlimit")
+    model.plot_legend(ax,loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=len(return_periods))
     if output_file!="":ax.get_figure().savefig(output_file,bbox_inches="tight")
     return ax
 
@@ -916,7 +920,7 @@ def plot_bounds(file='NORA10_6036N_0336E.1958-01-01.2022-12-31.txt'):
     
     return 
 
-def plot_monthly_return_periods(data, var='hs', periods=[1, 10, 100, 10000],distribution='Weibull3P_MOM',method='default',threshold='default', units='m',output_file='monthly_extremes_weibull.png'):
+def plot_monthly_return_periods(data, var='hs', periods=[1, 10, 100, 10000],distribution='Weibull3P_MOM',method='default',threshold='default', units='m', cmap = plt.get_cmap("viridis"),output_file='monthly_extremes_weibull.png'):
     df = tables.table_monthly_return_periods(data=data,var=var, periods=periods,distribution=distribution,method=method,threshold=threshold, units=units, output_file=None)
     fig, ax = plt.subplots()
     cmap = plt.get_cmap("viridis")
@@ -924,10 +928,10 @@ def plot_monthly_return_periods(data, var='hs', periods=[1, 10, 100, 10000],dist
     for i in range(len(periods)):
         plt.plot(df['Month'][1:-1], df.iloc[1:-1,-i-1],marker = 'o',label=df.keys()[-i-1].split(':')[1],color=colors[i])
 
-    plt.title('Return values for '+str(var)+' ['+units+']',fontsize=16)
-    plt.xlabel('Month',fontsize=15)
-    plt.legend()
-    plt.grid()
+    plt.title('Monthly return values for '+str(var)+' ['+units+']')
+    plt.xlabel('Month')
+    plt.ylabel(str(var)+' ['+units+']')
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     if output_file != "": plt.savefig(output_file)
     return fig
 
@@ -941,11 +945,10 @@ def plot_directional_return_periods(data, var='hs',var_dir='Pdir', periods=[1, 1
         plt.plot(df['Direction sector'][1:-1], df[f'Return period: {i} [years]'][1:-1],marker = 'o',label=f'{i} years',color=colors[a])
         a=a+1
     
-    plt.title('Return values for '+str(var)+' ['+units+']',fontsize=16)
-    plt.xlabel('Direction',fontsize=15)
-    plt.ylabel(str(var)+' ['+units+']',fontsize=15)
+    plt.title('Directional return values for '+str(var)+' ['+units+']')
+    plt.xlabel('Direction')
+    plt.ylabel(str(var)+' ['+units+']')
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=len(periods))
-    plt.grid()
     if output_file != "": plt.savefig(output_file)
     return fig
 
@@ -1117,22 +1120,23 @@ def plot_profile_return_values(data,var=['W10','W50','W80','W100','W150'], z=[10
     return fig
 
 
-def plot_current_for_given_wind(data: pd.DataFrame, var_curr: str, var_wind: str,output_file='curr_for_given_wind.png'):
+def plot_current_for_given_wind(data: pd.DataFrame, var_curr: str, var_wind: str,cmap = 'hot', output_file='curr_for_given_wind.png'):
     df = tables.table_current_for_given_wind(data=data, var_curr=var_curr, var_wind=var_wind, bin_width=2,max_wind=np.ceil(data[var_wind].max()), output_file=False)
     # Plot the 2D histogram
     fig, ax = plt.subplots()
-    plt.hist2d(data[var_wind],data[var_curr], bins=50, cmap='hot', cmin=1)
+    plt.hist2d(data[var_wind],data[var_curr], bins=50, cmap=cmap, cmin=1)
     plt.scatter(df['U[m/s]'], df['Uc(P5-obs) [m/s]'], marker='x', color='grey', label='P5')
-    plt.scatter(df['U[m/s]'], df['Uc(Mean-obs) [m/s]'], marker='x', color='blue', label='Mean')
-    plt.scatter(df['U[m/s]'], df['Uc(P95-obs) [m/s]'], marker='x', color='magenta', label='P95')
+    plt.scatter(df['U[m/s]'], df['Uc(Mean-obs) [m/s]'], marker='x', color='#303359', label='Mean')
+    plt.scatter(df['U[m/s]'], df['Uc(P95-obs) [m/s]'], marker='x', color='#FF00E4', label='P95')
     plt.plot(df['U[m/s]'],df['Uc(P5-model) [m/s]'],  color='grey', label='P5 fitted')
-    plt.plot(df['U[m/s]'],df['Uc(Mean-model) [m/s]'],  color='blue', label='Mean fitted')
-    plt.plot(df['U[m/s]'],df['Uc(P95-model) [m/s]'],  color='magenta', label='P95 fitted')
+    plt.plot(df['U[m/s]'],df['Uc(Mean-model) [m/s]'],  color='#303359', label='Mean fitted')
+    plt.plot(df['U[m/s]'],df['Uc(P95-model) [m/s]'],  color='#FF00E4', label='P95 fitted')
 
-    plt.ylabel('Current speed, $U_c$ [m/s]',fontsize=16)
-    plt.xlabel('Wind speed, $U$ [m/s]',fontsize=16)
-    plt.xlim(0,df['U[m/s]'].max())
-    plt.ylim(0,1.5*df['Uc(Mean-model) [m/s]'].max())
+    plt.ylabel('Current speed, $U_c$ [m/s]')
+    plt.xlabel('Wind speed, $U$ [m/s]')
+    plt.title('Current speed for given wind')
+    plt.xlim(0,df['U[m/s]'].max()*1.2)
+    plt.ylim(0,3.5*df['Uc(Mean-model) [m/s]'].max())
     plt.grid()
     plt.legend(loc='lower right')
     plt.tight_layout()
@@ -1147,11 +1151,11 @@ def plot_current_for_given_hs(data: pd.DataFrame, var_curr: str, var_hs: str,max
     fig, ax = plt.subplots()
     plt.hist2d(data[var_hs],data[var_curr], bins=50, cmap='hot', cmin=1)
     plt.scatter(df['Hs[m]'], df['Uc(P5-obs) [m/s]'], marker='x', color='grey', label='P5')
-    plt.scatter(df['Hs[m]'], df['Uc(Mean-obs) [m/s]'], marker='x', color='blue', label='Mean')
-    plt.scatter(df['Hs[m]'], df['Uc(P95-obs) [m/s]'], marker='x', color='magenta', label='P95')
+    plt.scatter(df['Hs[m]'], df['Uc(Mean-obs) [m/s]'], marker='x', color="#303359", label='Mean')
+    plt.scatter(df['Hs[m]'], df['Uc(P95-obs) [m/s]'], marker='x', color="#FF00E4", label='P95')
     plt.plot(df['Hs[m]'],df['Uc(P5-model) [m/s]'],  color='grey', label='P5 fitted')
-    plt.plot(df['Hs[m]'],df['Uc(Mean-model) [m/s]'],  color='blue', label='Mean fitted')
-    plt.plot(df['Hs[m]'],df['Uc(P95-model) [m/s]'],  color='magenta', label='P95 fitted')
+    plt.plot(df['Hs[m]'],df['Uc(Mean-model) [m/s]'],  color="#303359", label='Mean fitted')
+    plt.plot(df['Hs[m]'],df['Uc(P95-model) [m/s]'],  color="#FF00E4", label='P95 fitted')
 
     plt.ylabel('Current speed, $U_c$ [m/s]',fontsize=16)
     plt.xlabel('$H_s$ [m]',fontsize=16)

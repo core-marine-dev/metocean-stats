@@ -61,7 +61,7 @@ def var_rose(data,
 
     elif method == 'monthly':
         fig = monthly_var_rose(data=data,var_dir=direction,var=intensity,bins=bins_range,max_perc=max_perc,
-                               decimal_places=decimal_places,units=units,single_figure=single_figure,output_file=output_file)
+                               decimal_places=decimal_places,units=units,single_figure=single_figure,cmap=cmap,output_file=output_file)
     
     plt.close()
     return fig
@@ -73,10 +73,10 @@ def monthly_var_rose(data,
                      max_perc=40,
                      decimal_places=1, 
                      units='m/s',
-                     single_figure=True,
+                     single_figure=True, 
+                     cmap=plt.get_cmap("viridis"),
                      output_file='rose.png', 
-                     nsector=16, 
-                     cmap=plt.get_cmap("viridis")):
+                     nsector=16):
 
     # this function make monthly wind/wave rose
     # direction, intensity: panda series 

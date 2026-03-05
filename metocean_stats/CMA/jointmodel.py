@@ -373,6 +373,8 @@ class JointProbabilityModel(GlobalHierarchicalModel):
             A name for each contour.
         cmap : matplotlib colormap
             Colormap to color contours. Only used if c/color keyword is not in kwargs.
+        title : str
+            Figure title
         kwargs : keyword arguments
             Any matplotlib plot keyword arguments, e.g.
             "color"="blue","linewidth"=[2,3,4],"label":["1 year","10 year","100 year"]}.
@@ -414,7 +416,7 @@ class JointProbabilityModel(GlobalHierarchicalModel):
             new_artist = list(set(ax.get_children())-set(old_artists))
             self.legend_handles += new_artist
             self.legend_labels += [labels[i]]
-
+            
         return ax
 
     def plot_pdf_heatmap(

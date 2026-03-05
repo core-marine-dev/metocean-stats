@@ -321,10 +321,10 @@ def plot_monthly_stats(data: pd.DataFrame,
         ax.set_xticks(np.arange(1,13))
         ax.set_xticklabels(monthlabels)
 
-    plt.title(title,fontsize=16)
-    plt.xlabel('Month',fontsize=15)
-    plt.legend(labels)
-    plt.grid()
+    plt.title(title)
+    plt.xlabel('Month')
+    plt.ylabel(var)
+    plt.legend(labels,loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     if output_file != "": plt.savefig(output_file)
     return fig
 
@@ -462,11 +462,10 @@ def plot_hourly_stats(data:pd.DataFrame,
         else:
             plt.fill_between(xaxis,percentiles[fill_between[0]],percentiles[fill_between[1]],alpha=0.25)
     
-    plt.title(title,fontsize=14)
-    plt.xlabel('Hours',fontsize=12)
-    plt.ylabel(var,fontsize=12)
-    plt.legend(labels)
-    plt.grid()
+    plt.title(title)
+    plt.xlabel('Hours')
+    plt.ylabel(var)
+    plt.legend(labels,loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=4)
     if output_file != "": plt.savefig(output_file)
     return fig
 
@@ -626,26 +625,25 @@ def plot_monthly_weather_window_MultipleVariables(data: pd.DataFrame, var: str, 
     return fig, table
 
 
-def plot_profile_stats(data,var=['W10','W50','W80','W100','W150'],z=[10, 50, 80, 100, 150],xlabel='[m/s]',loc='lower right',reverse_yaxis=False,output_file='stats_profile.png'):
+def plot_profile_stats(data,var=['W10','W50','W80','W100','W150'],z=[10, 50, 80, 100, 150],xlabel='Current velocity [m/s]',loc='lower right',reverse_yaxis=False,cmap = mpl.colormaps['viridis'],output_file='stats_profile.png'):
     df = tables.table_profile_stats(data=data, var=var, z=z, output_file=None)
     df = df.drop(['Std.dev', 'Max Speed Event'],axis=1)
     fig, ax = plt.subplots()
     plt.yticks(z)  # Set yticks to be the values in z
     ax.yaxis.set_major_locator(mticker.MultipleLocator(int(max(z)/4)))  # Set major y-ticks at intervals of 10
-    cmap = mpl.colormaps['viridis']
-    # Take colors at regular intervals spanning the colormap.
     colors = cmap(np.linspace(0, 1, len(df.columns[1:])))
     i=0
     for column in df.columns[1:]:
         plt.plot(df[column][1:],z,marker='.', label=column,color=colors[i])
         i=i+1
-    plt.ylabel('z [m]')
+    plt.ylabel('Depth [m]')
     plt.xlabel(xlabel)
     if reverse_yaxis:
         plt.gca().invert_yaxis()
     plt.legend()
     plt.grid(True)
-    plt.legend(loc=loc)
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.22), ncol=4)
+    plt.title('Current velocity profile [m/s]')
     plt.tight_layout()
     if output_file != "": plt.savefig(output_file)
 
