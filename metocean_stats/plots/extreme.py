@@ -949,7 +949,7 @@ def plot_directional_return_periods(data, var='hs',var_dir='Pdir', periods=[1, 1
     plt.xlabel('Direction')
     plt.ylabel(str(var)+' ['+units+']')
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=len(periods))
-    if output_file != "": plt.savefig(output_file)
+    if output_file != "": plt.savefig(output_file, bbox_inches='tight')
     return fig
 
 
