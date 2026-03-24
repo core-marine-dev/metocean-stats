@@ -325,7 +325,7 @@ def plot_monthly_stats(data: pd.DataFrame,
     plt.xlabel('Month')
     plt.ylabel(var)
     plt.legend(labels,loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
-    if output_file != "": plt.savefig(output_file)
+    if output_file != "": plt.savefig(output_file, bbox_inches='tight')
     return fig
 
 
