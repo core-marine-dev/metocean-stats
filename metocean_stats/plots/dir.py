@@ -35,32 +35,35 @@ def var_rose(data,
              single_figure=True, 
              output_file='rose.png', 
              nsector=16, 
-             cmap=plt.get_cmap("viridis")):
-    
+             cmap=plt.get_cmap("viridis"),
+             inverse = False):
+
     direction = var_dir
     intensity = var
-
     direction2 = data[direction]
     intensity2 = data[intensity]
-    size = 5
+    
+    if inverse:
+        direction2 = direction2+ 180.
+        direction2[direction2>= 360.] = direction2 -360
+        
+    size = 8
     bins_range = np.array([0, np.percentile(intensity2,40),
                    np.percentile(intensity2,60),
                    np.percentile(intensity2,80),
                    np.percentile(intensity2,99)])
-
+    
     if method == 'overall':
         fig = plt.figure(figsize = (8,8))
         ax = fig.add_subplot(111, projection="windrose")
         ax.bar(direction2, intensity2, normed=True, bins=bins_range, opening=0.99,edgecolor="white",cmap=cmap, nsector=nsector)
-        ax.set_yticks(np.arange(5, max_perc+10, step=10))
-        ax.set_yticklabels(np.arange(5, max_perc+10, step=10))
         ax.set_legend(decimal_places=decimal_places,  title=units)
         ax.set_title('Overall')
         ax.figure.set_size_inches(size, size)
         plt.savefig(output_file,dpi=100,facecolor='white',bbox_inches='tight')
 
     elif method == 'monthly':
-        fig = monthly_var_rose(data=data,var_dir=direction,var=intensity,bins=bins_range,max_perc=max_perc,
+        fig = monthly_var_rose(data=data,var_dir=direction,var=intensity,bins=bins_range,
                                decimal_places=decimal_places,units=units,single_figure=single_figure,cmap=cmap,output_file=output_file)
     
     plt.close()
@@ -108,8 +111,6 @@ def monthly_var_rose(data,
             fig = plt.figure(figsize = (8,8))
             ax = fig.add_subplot(111, projection="windrose")
             ax.bar(dic_direction[months[j]], dic_intensity[months[j]], normed=True, bins=bins, opening=0.99,edgecolor="white",cmap=cmap, nsector=nsector)
-            ax.set_yticks(np.arange(5, max_perc+10, step=10))
-            ax.set_yticklabels(np.arange(5, max_perc+10, step=10))
             ax.set_legend(decimal_places=decimal_places,  title=units)
             ax.set_title(months[j])
             size = 5
@@ -122,8 +123,7 @@ def monthly_var_rose(data,
         for j, ax in enumerate(axs.flatten()):
             ax.bar(dic_direction[months[j]], dic_intensity[months[j]], normed=True, bins=bins, opening=0.99,edgecolor="white",cmap=cmap, nsector=nsector)
             ax.set_title(months[j],fontsize=16)
-            ax.set_yticks(np.arange(5, max_perc+10, step=10))
-            ax.set_yticklabels(np.arange(5, max_perc+10, step=10))
+            
 
         # Place the legend in the last subplot
         axs.flatten()[-1].legend(decimal_places=decimal_places, title=units)
