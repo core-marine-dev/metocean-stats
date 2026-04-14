@@ -175,7 +175,8 @@ def table_monthly_return_periods(data, var='hs', periods=[1, 10, 100, 10000],dis
 
 def table_directional_return_periods(data: pd.DataFrame, var='hs', var_dir='dir', periods=[1, 10, 100, 10000], distribution='Weibull3P_MOM', units='m',adjustment='NORSOK',method='default', threshold='default',output_file='directional_extremes_weibull.csv'):
     params, return_periods, sector_prob,  threshold_values, num_events_per_year = stats.directional_extremes(data=data, var=var, var_dir=var_dir, periods=periods,distribution=distribution, adjustment=adjustment, method=method, threshold=threshold)    
-    dir = ['-'] + [str(angle) + '°' for angle in np.arange(0,360,30)] + ['Omni']
+    # dir = ['-'] + [str(angle) + '°' for angle in np.arange(0,360,30)] + ['Omni']
+    dir = ['-'] + [str(angle) for angle in np.arange(0,360,30)] + ['Omni']
     # Initialize lists to store table data
     sector_prob = ['%'] + [round(value, 2) for value in sector_prob] + [100.00]
     shape = ['-'] + [round(shape, 3) if isinstance(shape, (int, float)) else shape for shape, _, _ in params]    
@@ -204,7 +205,7 @@ def table_directional_return_periods(data: pd.DataFrame, var='hs', var_dir='dir'
     # Create DataFrame
     df = pd.DataFrame(table_data)
     if output_file:
-        df.to_csv(output_file)
+        df.to_csv(output_file,index=False)
     
     return df
 
