@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "metocean-stats"
 description = "metocean-stats - Tool for generation of metocean statistics"
-version = "1.1.9"
+version = "1.2.0"
 authors = [
   { name = "Konstantinos Christakos MET Norway & NTNU" }
 ]
@@ -45,7 +45,8 @@ license-files = []
 [tool.setuptools_scm]
 write_to = "metocean_stats/_version.py"
 
-
+[tool.setuptools.packages.find]
+include = ["metocean_stats*"]
 
 
 

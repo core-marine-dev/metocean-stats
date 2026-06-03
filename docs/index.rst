@@ -13,10 +13,10 @@ The tool contains functions that generate:
 Installing **metocean-stats**
 =============================
 
-Alternative 1: Using Mambaforge (alternative to Miniconda)
+Alternative 1: Using Miniforge (alternative to Miniconda)
 ----------------------------------------------------------
 
-1. Install `mambaforge <https://mamba.readthedocs.io/en/latest/installation.html>`_ (`download <https://github.com/conda-forge/miniforge#mambaforge>`_)
+1. Install `miniforge <https://github.com/conda-forge/miniforge>`_ (`download <https://github.com/conda-forge/miniforge#requirements-and-installers>`_)
 2. Set up a *Python 3* environment for metocean-stats and install metocean-stats
 
 .. code-block:: bash
@@ -24,10 +24,10 @@ Alternative 1: Using Mambaforge (alternative to Miniconda)
    $ mamba create -n metocean-stats python=3 metocean-stats
    $ conda activate metocean-stats
 
-Alternative 2: Using Mambaforge (alternative to Miniconda) and Git
+Alternative 2: Using Miniforge (alternative to Miniconda) and Git
 ------------------------------------------------------------------
 
-1. Install `mambaforge <https://mamba.readthedocs.io/en/latest/installation.html>`_ (`download <https://github.com/conda-forge/miniforge#mambaforge>`_)
+1. Install `miniforge <https://github.com/conda-forge/miniforge>`_ (`download <https://github.com/conda-forge/miniforge#requirements-and-installers>`_)
 2. Clone metocean-stats:
 
 .. code-block:: bash
@@ -456,6 +456,36 @@ All-Year Round Weather Window For Hs Under A Threshold Table
 .. csv-table:: 
    :header-rows: 1
    :file: files/weather_window_thresholds.csv
+
+Characteristic durations for custom sequence of operation limits
+---------------------------
+
+.. code-block:: python
+
+    import pandas as pd
+    limits = pd.DataFrame({
+        "HS":[2.5]*24+[3.0]*48,
+        "TP":[20]*24+[25]*48
+    })
+    plots.plot_characteristic_durations(data,limits)
+
+.. image:: files/figure_characteristic_durations_custom_limits.png
+   :width: 500
+
+Empirical weather window probability in different time periods in the year
+---------------------------
+
+.. code-block:: python
+
+    import pandas as pd
+    limits = pd.DataFrame({
+        "HS":[2.5]*24+[3.0]*48,
+        "TP":[20]*24+[25]*48
+    })
+    plots.plot_weather_window_probability(data,limits)
+
+.. image:: files/figure_weather_window_probability.png
+   :width: 500
 
 Monthly Return Periods Table
 ----------------------------
